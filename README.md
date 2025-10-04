@@ -53,8 +53,8 @@ Make sure you have the following installed:
 ### 1️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/laravel-unified-search.git
-cd laravel-unified-search
+git clone https://github.com/Manojk-1989/docker-machine-test.git
+cd docker-machine-test
 
 2️⃣ Build and Start Docker Containers
 docker compose up -d --build
