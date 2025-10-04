@@ -1,3 +1,5 @@
+version: '3.9'
+
 services:
   app:
     build:
@@ -17,14 +19,22 @@ services:
       DB_DATABASE: laravel
       DB_USERNAME: root
       DB_PASSWORD: secret
+      SCOUT_DRIVER: meilisearch
       MEILISEARCH_HOST: http://meilisearch:7700
+      MEILISEARCH_KEY: masterKey
     depends_on:
       - db
       - meilisearch
+    command: >
+      sh -c "
+        php artisan migrate --force &&
+        php artisan serve --host=0.0.0.0 --port=8000
+      "
 
   db:
     image: mysql:8.0
     container_name: my_db
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: laravel
@@ -36,10 +46,14 @@ services:
   meilisearch:
     image: getmeili/meilisearch:v1.2
     container_name: my_meilisearch
+    restart: always
     ports:
       - "7700:7700"
     environment:
       MEILI_MASTER_KEY: masterKey
+    volumes:
+      - meili_data:/meili_data
 
 volumes:
   dbdata:
+  meili_data:
