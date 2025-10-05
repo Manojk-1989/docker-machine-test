@@ -1,139 +1,72 @@
-# docker-machine-test
+# 🚀 Laravel Docker Environment
 
-# 🔍 Laravel Unified Search API
-
-This project demonstrates a **unified search system** built with **Laravel 11**, **Sanctum authentication**, and **Meilisearch** for full-text search.  
-It provides:
-- Public search and suggestions endpoints
-- Protected admin-only search analytics
-- Docker-based development setup
+This project runs a Laravel application inside Docker with **MySQL** and **Meilisearch** services.  
+Follow these simple steps to build and run the application locally.
 
 ---
 
-## 🚀 Features
+## 🧱 Prerequisites
 
-✅ Unified search across multiple models:
-- Blog Posts  
-- Products  
-- Pages  
-- FAQs  
-
-✅ Typeahead suggestions  
-✅ Sanctum authentication for admin-only endpoints  
-✅ Meilisearch integration for fast searching  
-✅ Dockerized setup with MySQL and Meilisearch containers  
-✅ Seeded data for instant testing  
-
----
-
-## 🧩 Tech Stack
-
-| Component | Description |
-|------------|-------------|
-| **Framework** | Laravel 11 (PHP 8.2) |
-| **Database** | MySQL 8.0 |
-| **Search Engine** | Meilisearch v1.2 |
-| **Auth** | Laravel Sanctum |
-| **Containerization** | Docker & Docker Compose |
-
----
-
-## ⚙️ Prerequisites
-
-Make sure you have the following installed:
-
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+Before starting, make sure you have installed:
+- [Docker Desktop](https://www.docker.com/products/docker-desktop)
 - [Git](https://git-scm.com/downloads)
-- [Composer](https://getcomposer.org/)
 
 ---
 
-## 🧱 Setup Instructions
+## 🧩 Project Setup
 
-### 1️⃣ Clone the Repository
+### 1️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/Manojk-1989/docker-machine-test.git
+git clone https://github.com/your-username/docker-machine-test.git
 cd docker-machine-test
 
-2️⃣ Build and Start Docker Containers
+2️⃣ Build and start Docker containers
 docker compose up -d --build
 
-3️⃣ Run Migrations and Seeders
-docker exec -it my_app bash
-php artisan migrate:fresh --seed
 
-4️⃣ Access the Application
+⚠️ You may see a warning:
 
-Laravel API → http://localhost:8000
-
-Meilisearch Dashboard → http://localhost:7700
-
-🔐 Authentication Details
-Role	Email	Password
-Admin	admin@example.com	password
-
-To generate an API token (for admin routes):
-
-php artisan tinker
-$user = App\Models\User::first();
-$token = $user->createToken('admin-token')->plainTextToken;
-echo $token;
-
-Then use this token in Authorization Header:
-Authorization: Bearer <token>
+the attribute `version` is obsolete, it will be ignored
 
 
-🧭 API Endpoints
-🔹 Public Routes
-| Method | Endpoint                  | Description                                                          |
-| ------ | ------------------------- | -------------------------------------------------------------------- |
-| `GET`  | `/api/search`             | Perform a unified search across BlogPosts, Products, Pages, and FAQs |
-| `GET`  | `/api/search/suggestions` | Get live search suggestions                                          |
+This can be safely ignored.
 
-🔒 Admin Routes (Require Sanctum Token)
+3️⃣ Check running services
 
-| Method | Endpoint                    | Description               |
-| ------ | --------------------------- | ------------------------- |
-| `GET`  | `/api/search/logs`          | View all search logs      |
-| `GET`  | `/api/search/analytics`     | View search statistics    |
-| `POST` | `/api/search/rebuild-index` | Rebuild Meilisearch index |
+docker ps
 
 
-🧪 Testing the API
+Expected containers:
 
-You can test using Postman or curl.
+app → Laravel application (port 8000)
 
-Example — Public Search
+db → MySQL database (port 3307)
 
-curl http://localhost:8000/api/search?query=laravel
+meilisearch → Search engine (port 7700)
+
+4️⃣ Install PHP dependencies via Composer
+
+Run this command to install Laravel dependencies inside the container:
+
+docker compose run --rm app composer install --no-interaction --prefer-dist --timeout=1200
+
+⏱ The --timeout=1200 increases Composer's timeout to 20 minutes to prevent installation errors.
+
+5️⃣ Generate the application key
+
+After dependencies are installed, generate the Laravel app key:
+
+docker exec -it app php artisan key:generate
+
+6️⃣ Run database migrations
+
+docker exec -it app php artisan migrate
 
 
-Example — Admin Search Logs (with token)
+7️⃣ Access the application
 
-curl -H "Authorization: Bearer <your_token_here>" \
-http://localhost:8000/api/search/logs
+Visit your Laravel app in the browser:
 
-🧰 Common Commands
-
-| Command                            | Description                              |
-| ---------------------------------- | ---------------------------------------- |
-| `docker compose up -d`             | Start containers                         |
-| `docker compose down -v`           | Stop and remove all containers & volumes |
-| `docker exec -it my_app bash`      | Enter Laravel container shell            |
-| `php artisan migrate:fresh --seed` | Reset and seed database                  |
-| `php artisan tinker`               | Open interactive shell                   |
-
-
-🧹 Troubleshooting
-MySQL Connection Error:
-Ensure MySQL container is up (docker ps) and matches credentials in .env.
-
-Meilisearch Not Found:
-Visit http://localhost:7700
- to confirm Meilisearch is running.
-
-Token Issues:
-Re-run php artisan tinker and generate a new token.
-
+👉 http://localhost:8000
 
