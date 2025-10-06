@@ -77,8 +77,31 @@ Access the API documentation page:
 
 http://localhost:8000/docs/api#/
 
-9️⃣ Import Models to Meilisearch
+1️⃣ Clear and cache Laravel config
+
+Run inside your Laravel container:
+docker exec -it my_app php artisan config:clear
+docker exec -it my_app php artisan config:cache
+
+This ensures Laravel picks up the MEILISEARCH_KEY.
+
+2️⃣ Restart Meilisearch container (optional)
+docker compose restart meilisearch
+
+3️⃣ Test Meilisearch connection
+docker exec -it my_app php artisan tinker
+> config('scout.meilisearch.key');
+
+
+9️⃣ Re-import your models
 docker exec -it my_app php artisan scout:import "App\Models\Faq"
 docker exec -it my_app php artisan scout:import "App\Models\Page"
 docker exec -it my_app php artisan scout:import "App\Models\Product"
 docker exec -it my_app php artisan scout:import "App\Models\BlogPost"
+
+Then  Visit your Laravel app in the browser:
+put api on masterkey and submit then you get below sc reen
+
+http://localhost:7700/
+
+![alt text](image.png)
