@@ -53,11 +53,28 @@ docker compose run --rm app composer install --no-interaction --prefer-dist --ti
 
 ⏱ The --timeout=1200 increases Composer's timeout to 20 minutes to prevent installation errors.
 
+🔧 Step 1 — Create a .env file
+
+Inside your project root (where artisan lives), run:
+cp .env.example .env
+
+🔧 Step 2 — Update database settings in .env
+
+Open .env and ensure the database settings match your Docker setup:
+
+DB_CONNECTION=mysql
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=root
+DB_PASSWORD=
+
+
 5️⃣ Generate the application key
 
 After dependencies are installed, generate the Laravel app key:
 
-docker exec -it app php artisan key:generate
+docker exec -it my_app php artisan key:generate
 
 6️⃣ Run database migrations
 
@@ -70,3 +87,9 @@ Visit your Laravel app in the browser:
 
 👉 http://localhost:8000
 
+Access the api documentation page
+
+Visit your Laravel app in the browser:
+
+
+http://localhost:8000/docs/api#/
