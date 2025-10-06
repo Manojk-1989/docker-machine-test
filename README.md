@@ -1,13 +1,14 @@
 # 🚀 Laravel Docker Environment
 
-This project runs a Laravel application inside Docker with **MySQL** and **Meilisearch** services.  
-Follow these simple steps to build and run the application locally.
+This project runs a **Laravel 11** application inside Docker with **MySQL** and **Meilisearch** services.  
+Follow the steps below to build and run the application locally.
 
 ---
 
 ## 🧱 Prerequisites
 
 Before starting, make sure you have installed:
+
 - [Docker Desktop](https://www.docker.com/products/docker-desktop)
 - [Git](https://git-scm.com/downloads)
 
@@ -24,44 +25,25 @@ cd docker-machine-test
 2️⃣ Build and start Docker containers
 docker compose up -d --build
 
-
-⚠️ You may see a warning:
-
-the attribute `version` is obsolete, it will be ignored
-
-
-This can be safely ignored.
+⚠️ You may see a warning about version being obsolete. This can be safely ignored.
 
 3️⃣ Check running services
-
 docker ps
 
-
 Expected containers:
-
-app → Laravel application (port 8000)
-
-db → MySQL database (port 3307)
-
-meilisearch → Search engine (port 7700)
+| Container     | Description         | Port |
+| ------------- | ------------------- | ---- |
+| `app`         | Laravel application | 8000 |
+| `db`          | MySQL database      | 3307 |
+| `meilisearch` | Search engine       | 7700 |
 
 4️⃣ Install PHP dependencies via Composer
+docker compose run --rm app composer install --no-interaction --prefer-dist
 
-Run this command to install Laravel dependencies inside the container:
+5️⃣ Create a .env file
+docker exec -it my_app cp /var/www/html/.env.example /var/www/html/.env
 
-docker compose run --rm app composer install --no-interaction --prefer-dist --timeout=1200
-
-⏱ The --timeout=1200 increases Composer's timeout to 20 minutes to prevent installation errors.
-
-🔧 Step 1 — Create a .env file
-
-Inside your project root (where artisan lives), run:
-cp .env.example .env
-
-🔧 Step 2 — Update database settings in .env
-
-Open .env and ensure the database settings match your Docker setup:
-
+6️⃣ Update database settings in .env
 DB_CONNECTION=mysql
 DB_HOST=db
 DB_PORT=3306
@@ -69,27 +51,34 @@ DB_DATABASE=laravel
 DB_USERNAME=root
 DB_PASSWORD=
 
+✅ Laravel Scout + Meilisearch Configuration
+SCOUT_DRIVER=meilisearch
+SCOUT_QUEUE=true
+MEILISEARCH_HOST=http://meilisearch:7700
+MEILISEARCH_KEY=masterKey
 
-5️⃣ Generate the application key
+✅ Sanctum / Session Config
+SANCTUM_STATEFUL_DOMAINS=localhost:8000
+SESSION_DOMAIN=localhost
 
-After dependencies are installed, generate the Laravel app key:
-
+7️⃣ Generate the application key
 docker exec -it my_app php artisan key:generate
 
-6️⃣ Run database migrations
+8️⃣ Run database migrations
+docker exec -it my_app php artisan migrate:fresh --seed
 
-docker exec -it app php artisan migrate
-
-
-7️⃣ Access the application
+🌐 Access the application
 
 Visit your Laravel app in the browser:
 
-👉 http://localhost:8000
+http://localhost:8000
 
-Access the api documentation page
-
-Visit your Laravel app in the browser:
-
+Access the API documentation page:
 
 http://localhost:8000/docs/api#/
+
+9️⃣ Import Models to Meilisearch
+docker exec -it my_app php artisan scout:import "App\Models\Faq"
+docker exec -it my_app php artisan scout:import "App\Models\Page"
+docker exec -it my_app php artisan scout:import "App\Models\Product"
+docker exec -it my_app php artisan scout:import "App\Models\BlogPost"
