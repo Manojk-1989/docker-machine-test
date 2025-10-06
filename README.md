@@ -19,7 +19,7 @@ Before starting, make sure you have installed:
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/your-username/docker-machine-test.git
+git clone https://github.com/Manojk-1989/docker-machine-test.git
 cd docker-machine-test
 
 2️⃣ Build and start Docker containers
